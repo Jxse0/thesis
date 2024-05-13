@@ -3,12 +3,12 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 async function getData() {
-  const res = await fetch("http://localhost:3001/");
+  const res = await fetch("http://127.0.0.1:8000/");
   if (!res.ok) {
     throw new Error("Failed to fetch data");
   }
-  const data = await res.text(); // change this line
-  console.log(data);
+  const data = await res.json(); // change this line
+  console.log(data[0]);
   return data;
 }
 
