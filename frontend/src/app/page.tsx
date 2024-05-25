@@ -21,5 +21,11 @@ export default function Home() {
       .catch((err) => console.error(err));
   }, []);
 
-  return <Link href="/home">Home</Link>;
+  return (
+    <div>
+      <Link href="/home">Home</Link>
+      <br />
+      <Link href="/uploadImage">Upload Image</Link>
+    </div>
+  );
 }
