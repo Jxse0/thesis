@@ -31,6 +31,6 @@ def read_item(item_id: int, q: Union[str, None] = None):
     return {"item_id": item_id, "q": q}
 
 @app.get("/predict/{number}")
-def predict_number(number: float):
-    prediction = predict(number)  # Use the predict function from your model
+def predict_number(number: int):
+    prediction = predict(number)
     return {"prediction": prediction}

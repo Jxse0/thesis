@@ -22,9 +22,14 @@ def createModel():
 
 model = createModel()
 
+
+
 def predict(input):
     global model
     if model is None:
         model = createModel()
-    return model.predict([5.0])
+    input_transformed = tf.cast(tf.constant(input), dtype=tf.float32)
+    input_transformed = tf.expand_dims(input_transformed, axis=-1)
+    prediction = model.predict([input_transformed])
+    return prediction[0][0].item()
 
