@@ -1,9 +1,9 @@
 "use client";
-
 import React, { useState, ChangeEvent } from "react";
 
 const UploadImageComponent = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [response, setResponse] = useState<string>("");
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -22,7 +22,9 @@ const UploadImageComponent = () => {
       })
         .then((response) => response.json())
         .then((data) => {
-          console.log("Upload successful:", data);
+          setResponse(JSON.stringify(data));
+          console.log(data);
+          console.log(response);
         })
         .catch((error) => {
           console.error("Error uploading file:", error);
@@ -37,6 +39,7 @@ const UploadImageComponent = () => {
       <input type="file" onChange={handleFileChange} />
       <button onClick={handleUpload}>Upload Image</button>
       {selectedFile && <p>Selected file: {selectedFile.name}</p>}
+      {response && <p>Response: {response}</p>}
     </div>
   );
 };
