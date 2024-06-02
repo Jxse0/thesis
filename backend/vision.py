@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 import os
 from openai import OpenAI
 
+
 load_dotenv()
 secret_key = os.getenv('OPENAI_API_KEY')
 
@@ -34,7 +35,8 @@ def vision(file):
                ],
                max_tokens=300,
           )
-          return response.choices[0].message.content
+          result = response.choices[0].message.content
+          return result
 
      except Exception as e:
           return f"An error occurred: {str(e)}"
