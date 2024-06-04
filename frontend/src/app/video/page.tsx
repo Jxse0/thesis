@@ -54,6 +54,14 @@ const UploadVideo = () => {
     }
   };
 
+  const transcript = () => {
+    let transcript = "";
+    response.map((segment) => {
+      transcript += segment.text;
+    });
+    return transcript;
+  };
+
   return (
     <div>
       <input type="file" onChange={handleFileChange} />
@@ -74,6 +82,7 @@ const UploadVideo = () => {
           {currentText && <div className="video-subtitle">{currentText}</div>}
         </div>
       )}
+      <p>{transcript()}</p>
     </div>
   );
 };
