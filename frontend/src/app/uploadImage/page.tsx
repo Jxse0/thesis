@@ -40,6 +40,7 @@ const UploadImageComponent = () => {
       <button onClick={handleUpload}>Upload Image</button>
       {selectedFile && <p>Selected file: {selectedFile.name}</p>}
       {imageUrl && <img src={imageUrl} alt={response} />}
+      {response && <p>Response: {response}</p>}
     </div>
   );
 };
