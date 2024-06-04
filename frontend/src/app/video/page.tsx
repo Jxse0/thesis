@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, ChangeEvent, useRef } from "react";
+import "./UploadVideo.css"; // Assuming you have a CSS file for styling
 
 const UploadVideo = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -63,14 +64,16 @@ const UploadVideo = () => {
       {isLoading && <p>Loading...</p>} {/* Add this line */}
       {selectedFile && <p>Selected file: {selectedFile.name}</p>}
       {videoUrl && (
-        <video
-          src={videoUrl}
-          controls
-          onTimeUpdate={handleTimeUpdate}
-          ref={videoRef}
-        />
+        <div className="video-container">
+          <video
+            src={videoUrl}
+            controls
+            onTimeUpdate={handleTimeUpdate}
+            ref={videoRef}
+          />
+          {currentText && <div className="video-subtitle">{currentText}</div>}
+        </div>
       )}
-      {currentText && <p>Subtitle: {currentText}</p>}
     </div>
   );
 };
