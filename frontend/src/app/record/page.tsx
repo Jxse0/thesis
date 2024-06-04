@@ -6,6 +6,7 @@ const RecordPage: React.FC = () => {
   const [audioURL, setAudioURL] = useState<string | null>(null);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const [response, setResponse] = useState<string>("");
 
   const handleStartRecording = async () => {
     setIsRecording(true);
@@ -38,22 +39,25 @@ const RecordPage: React.FC = () => {
       const formData = new FormData();
       formData.append("file", audioBlob, "recording.wav");
 
-      const response = await fetch("http://127.0.0.1:8000/transcript", {
+      fetch("http://127.0.0.1:8000/transcript", {
         method: "POST",
         body: formData,
-      });
-
-      if (response.ok) {
-        alert("Audio file uploaded successfully!");
-      } else {
-        alert("Failed to upload audio file.");
-      }
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setResponse(data.message || JSON.stringify(data));
+          console.log(response);
+        })
+        .catch((error) => {
+          console.error("Error uploading file:", error);
+        });
     }
   };
 
   const handleDelete = () => {
     setAudioBlob(null);
     setAudioURL(null);
+    setResponse("");
   };
 
   return (
@@ -69,6 +73,12 @@ const RecordPage: React.FC = () => {
           <audio src={audioURL} controls />
           <button onClick={handleSubmit}>Submit</button>
           <button onClick={handleDelete}>Delete</button>
+        </div>
+      )}
+      {response && (
+        <div>
+          <p>{response}</p>
+          <button onClick={handleDelete}>Clear</button>
         </div>
       )}
     </div>
