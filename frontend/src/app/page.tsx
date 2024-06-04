@@ -23,9 +23,8 @@ export default function Home() {
 
   return (
     <div>
-      <Link href="/home">Home</Link>
-      <br />
       <Link href="/uploadImage">Upload Image</Link>
+      <br />
       <Link href="/record">Record</Link>
     </div>
   );
