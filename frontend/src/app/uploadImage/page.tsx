@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, ChangeEvent } from "react";
 
-const UploadImageComponent = () => {
+const UploadImage = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [response, setResponse] = useState<string>("");
   const [imageUrl, setImageUrl] = useState<string>("");
@@ -45,4 +45,4 @@ const UploadImageComponent = () => {
   );
 };
 
-export default UploadImageComponent;
+export default UploadImage;

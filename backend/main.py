@@ -6,7 +6,7 @@ import os
 from vision import vision
 from transcription import transcription
 import uuid
-import time
+from subtitle import subtitle
 
 
 
@@ -35,7 +35,7 @@ def read_root():
 async def upload_image(file: UploadFile = File(...)):
     try:
         # Define the file path
-        file_path = os.path.join("img", file.filename)#
+        file_path = os.path.join("img", file.filename)
 
         # Save the file
         with open(file_path, "wb") as buffer:
@@ -49,7 +49,7 @@ async def upload_image(file: UploadFile = File(...)):
             try:
                 os.remove(file_path)
             except Exception as e:
-                print(f"Error deleting file {file.filename}: {e}")
+                return f"Error deleting file {file.filename}: {e}"
 
 @app.post("/transcript")
 async def upload_audio(file: UploadFile = File(...)):
@@ -83,9 +83,27 @@ async def upload_audio(file: UploadFile = File(...)):
             try:
                 os.remove(file_path)
             except Exception as e:
-                print(f"Error deleting file {unique_filename}: {e}")
+                return f"Error deleting file {unique_filename}: {e}"
 
-    
+@app.post("/video")
+async def upload_image(file: UploadFile = File(...)):
+    try:
+        # Define the file path
+        file_path = os.path.join("video", file.filename)
+
+        # Save the file
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+        return JSONResponse(subtitle(file_path), status_code=200)
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=500)
+    finally:
+        # Ensure the file is deleted after processing
+        if file_path and os.path.exists(file_path):
+            try:
+                os.remove(file_path)
+            except Exception as e:
+                return f"Error deleting file {file.filename}: {e}"
 
 
 
