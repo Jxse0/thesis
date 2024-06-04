@@ -26,6 +26,7 @@ export default function Home() {
       <Link href="/home">Home</Link>
       <br />
       <Link href="/uploadImage">Upload Image</Link>
+      <Link href="/record">Record</Link>
     </div>
   );
 }
