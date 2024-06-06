@@ -13,8 +13,8 @@ Follow these steps to set up and run the project on your local machine.
 
 1. **Clone the repository:**
    ```sh
-   git clone https://github.com/your-username/your-repo-name.git
-   cd your-repo-name
+   git clone https://github.com/Jxse0/thesis.git
+   cd thesis
    ```
 
 2. **Enter your OpenAI API key:**
