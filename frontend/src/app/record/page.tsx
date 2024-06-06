@@ -7,6 +7,7 @@ const RecordPage: React.FC = () => {
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const [response, setResponse] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleStartRecording = async () => {
     setIsRecording(true);
@@ -36,6 +37,7 @@ const RecordPage: React.FC = () => {
 
   const handleSubmit = async () => {
     if (audioBlob) {
+      setLoading(true); // Set loading to true when the submission starts
       const formData = new FormData();
       formData.append("file", audioBlob, "recording.wav");
 
@@ -46,10 +48,11 @@ const RecordPage: React.FC = () => {
         .then((response) => response.json())
         .then((data) => {
           setResponse(data.message || JSON.stringify(data));
-          console.log(response);
+          setLoading(false); // Set loading to false when the submission is complete
         })
         .catch((error) => {
           console.error("Error uploading file:", error);
+          setLoading(false); // Set loading to false if there's an error
         });
     }
   };
@@ -66,13 +69,19 @@ const RecordPage: React.FC = () => {
       {isRecording ? (
         <button onClick={handleStopRecording}>Stop Recording</button>
       ) : (
-        <button onClick={handleStartRecording}>Start Recording</button>
+        <button onClick={handleStartRecording} disabled={loading}>
+          {loading ? "Recording..." : "Start Recording"}
+        </button>
       )}
       {audioURL && (
         <div>
           <audio src={audioURL} controls />
-          <button onClick={handleSubmit}>Submit</button>
-          <button onClick={handleDelete}>Delete</button>
+          <button onClick={handleSubmit} disabled={loading}>
+            {loading ? "Submitting..." : "Submit"}
+          </button>
+          <button onClick={handleDelete} disabled={loading}>
+            Delete
+          </button>
         </div>
       )}
       {response && (

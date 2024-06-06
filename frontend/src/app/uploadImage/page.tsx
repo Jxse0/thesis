@@ -5,6 +5,7 @@ const UploadImage = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [response, setResponse] = useState<string>("");
   const [imageUrl, setImageUrl] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -15,6 +16,7 @@ const UploadImage = () => {
 
   const handleUpload = () => {
     if (selectedFile) {
+      setLoading(true); // Set loading to true when the upload starts
       const formData = new FormData();
       formData.append("file", selectedFile);
 
@@ -25,9 +27,11 @@ const UploadImage = () => {
         .then((response) => response.json())
         .then((data) => {
           setResponse(data.message || JSON.stringify(data));
+          setLoading(false); // Set loading to false when the upload is complete
         })
         .catch((error) => {
           console.error("Error uploading file:", error);
+          setLoading(false); // Set loading to false if there's an error
         });
     } else {
       alert("Please select a file first.");
@@ -37,7 +41,9 @@ const UploadImage = () => {
   return (
     <div>
       <input type="file" onChange={handleFileChange} />
-      <button onClick={handleUpload}>Upload Image</button>
+      <button onClick={handleUpload} disabled={loading}>
+        {loading ? "Uploading..." : "Upload Image"}
+      </button>
       {selectedFile && <p>Selected file: {selectedFile.name}</p>}
       {imageUrl && <img src={imageUrl} alt={response} />}
       {response && <p>Response: {response}</p>}

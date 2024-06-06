@@ -66,9 +66,9 @@ const UploadVideo = () => {
     <div>
       <input type="file" onChange={handleFileChange} />
       <button onClick={handleUpload} disabled={isLoading}>
-        Upload Video
+        {isLoading ? "Uploading..." : "Upload Video"}
       </button>{" "}
-      {/* Add disabled attribute here */}
+      {/* Update button text based on isLoading state */}
       {isLoading && <p>Loading...</p>} {/* Add this line */}
       {selectedFile && <p>Selected file: {selectedFile.name}</p>}
       {videoUrl && (
