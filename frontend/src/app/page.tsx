@@ -32,9 +32,11 @@ export default function Home() {
       <div className="links">
         <Link href="/uploadImage">Upload Image</Link>
         <br />
-        <Link href="/record">Record</Link>
+        <Link href="/record">Audio Recorder</Link>
         <br />
         <Link href="/video">Upload Video</Link>
+        <br />
+        <Link href="/navigation">Webcam Recorder</Link>
       </div>
     </div>
   );
