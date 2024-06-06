@@ -52,7 +52,8 @@ On this page, you can upload a video to generate subtitles. The audio from the v
 
 ## Future Plans
 
-I am working on creating my own image classification model. Currently, the accuracy is promising, but the validation accuracy needs improvement. I am actively working on enhancing the model's performance.
+I am working on creating my own image classification model. Currently, the accuracy is promising, but the validation accuracy needs improvement. I am actively working on enhancing the model's performance. 
+The next topic I plan to experiment with is navigation. I aim to develop a way to use hand gestures to navigate through the browser. This will provide a more interactive and intuitive user experience.
 
 ---
 
