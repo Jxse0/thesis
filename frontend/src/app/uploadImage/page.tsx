@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, ChangeEvent } from "react";
+import "./UploadImage.css";
 
 const UploadImage = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -39,15 +40,18 @@ const UploadImage = () => {
   };
 
   return (
-    <div>
-      <input type="file" onChange={handleFileChange} />
-      <button onClick={handleUpload} disabled={loading}>
-        {loading ? "Uploading..." : "Upload Image"}
-      </button>
-      {selectedFile && <p>Selected file: {selectedFile.name}</p>}
-      {imageUrl && <img src={imageUrl} alt={response} />}
-      {response && <p>Response: {response}</p>}
-    </div>
+    <>
+      <h1>Upload Image</h1> <br />
+      <div className="container-image">
+        <input type="file" onChange={handleFileChange} accept="image/*" />
+        <button onClick={handleUpload} disabled={loading}>
+          {loading ? "Uploading..." : "Upload Image"}
+        </button>
+        {selectedFile && <p>Selected file: {selectedFile.name}</p>}
+        {imageUrl && <img src={imageUrl} alt={response} />}
+        {response && <p>Response: {response}</p>}
+      </div>
+    </>
   );
 };
 
