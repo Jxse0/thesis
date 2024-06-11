@@ -18,7 +18,6 @@ def transcription(file):
                 model="whisper-1",
                 file=audio_file
             )
-            print(response.text)
             return response.text
 
      except Exception as e:

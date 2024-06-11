@@ -37,7 +37,7 @@ const RecordPage: React.FC = () => {
 
   const handleSubmit = async () => {
     if (audioBlob) {
-      setLoading(true); // Set loading to true when the submission starts
+      setLoading(true);
       const formData = new FormData();
       formData.append("file", audioBlob, "recording.wav");
 
@@ -48,11 +48,11 @@ const RecordPage: React.FC = () => {
         .then((response) => response.json())
         .then((data) => {
           setResponse(data.message || JSON.stringify(data));
-          setLoading(false); // Set loading to false when the submission is complete
+          setLoading(false);
         })
         .catch((error) => {
           console.error("Error uploading file:", error);
-          setLoading(false); // Set loading to false if there's an error
+          setLoading(false);
         });
     }
   };

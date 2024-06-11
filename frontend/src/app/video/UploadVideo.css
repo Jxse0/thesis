@@ -5,8 +5,8 @@
 
 .video-subtitle {
   position: absolute;
-  left: 0; /* Add this line */
-  right: 0; /* Add this line */
+  left: 0;
+  right: 0;
   bottom: 70px;
   background: rgba(0, 0, 0, 0.6);
   color: white;

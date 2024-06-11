@@ -1,13 +1,13 @@
 "use client";
 import React, { useState, ChangeEvent, useRef } from "react";
-import "./UploadVideo.css"; // Assuming you have a CSS file for styling
+import "./UploadVideo.css";
 
 const UploadVideo = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [response, setResponse] = useState<any[]>([]);
   const [videoUrl, setVideoUrl] = useState<string>("");
   const [currentText, setCurrentText] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(false); // Add this line
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -19,7 +19,7 @@ const UploadVideo = () => {
 
   const handleUpload = () => {
     if (selectedFile) {
-      setIsLoading(true); // Add this line
+      setIsLoading(true);
       const formData = new FormData();
       formData.append("file", selectedFile);
 
@@ -31,11 +31,11 @@ const UploadVideo = () => {
         .then((data) => {
           setResponse(data);
           console.log(data);
-          setIsLoading(false); // Add this line
+          setIsLoading(false);
         })
         .catch((error) => {
           console.error("Error uploading file:", error);
-          setIsLoading(false); // Add this line
+          setIsLoading(false);
         });
     } else {
       alert("Please select a file first.");
@@ -68,8 +68,7 @@ const UploadVideo = () => {
       <button onClick={handleUpload} disabled={isLoading}>
         {isLoading ? "Uploading..." : "Upload Video"}
       </button>{" "}
-      {/* Update button text based on isLoading state */}
-      {isLoading && <p>Loading...</p>} {/* Add this line */}
+      {isLoading && <p>Loading...</p>}
       {selectedFile && <p>Selected file: {selectedFile.name}</p>}
       {videoUrl && (
         <div className="video-container">

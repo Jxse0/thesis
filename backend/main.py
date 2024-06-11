@@ -15,8 +15,6 @@ app = FastAPI()
 
 
 origins = [
-    "http://localhost.tiangolo.com",
-    "https://localhost.tiangolo.com",
     "http://localhost",
     "http://localhost:3000",
 ]
@@ -34,17 +32,14 @@ def read_root():
 @app.post("/img")
 async def upload_image(file: UploadFile = File(...)):
     try:
-        # Define the file path
         file_path = os.path.join("img", file.filename)
 
-        # Save the file
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
         return JSONResponse(vision(file_path), status_code=200)
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
     finally:
-        # Ensure the file is deleted after processing
         if file_path and os.path.exists(file_path):
             try:
                 os.remove(file_path)
@@ -56,29 +51,23 @@ async def upload_audio(file: UploadFile = File(...)):
     unique_filename = None
     file_path = None
     try:
-        # Generate a unique ID for the file
         unique_id = str(uuid.uuid4())
         file_extension = os.path.splitext(file.filename)[1]
         unique_filename = unique_id + file_extension
 
-        # Define the file path
         file_path = os.path.join("audio", unique_filename)
 
-        # Ensure the directory exists
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
-        # Save the file using a context manager to ensure it is closed properly
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
         
-        # Call transcription function (this function should return a dictionary)
         transcription_result = transcription(file_path)
         
         return JSONResponse(content=transcription_result, status_code=200)
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
     finally:
-        # Ensure the file is deleted after processing
         if file_path and os.path.exists(file_path):
             try:
                 os.remove(file_path)
@@ -88,17 +77,14 @@ async def upload_audio(file: UploadFile = File(...)):
 @app.post("/video")
 async def upload_image(file: UploadFile = File(...)):
     try:
-        # Define the file path
         file_path = os.path.join("video", file.filename)
 
-        # Save the file
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
         return JSONResponse(subtitle(file_path), status_code=200)
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
     finally:
-        # Ensure the file is deleted after processing
         if file_path and os.path.exists(file_path):
             try:
                 os.remove(file_path)

@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useDarkMode } from "./DarkModeContext"; // Adjust the import path
+import { useDarkMode } from "./DarkModeContext";
 
 async function getData() {
   const res = await fetch("http://127.0.0.1:8000/");

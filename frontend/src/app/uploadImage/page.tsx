@@ -17,7 +17,7 @@ const UploadImage = () => {
 
   const handleUpload = () => {
     if (selectedFile) {
-      setLoading(true); // Set loading to true when the upload starts
+      setLoading(true);
       const formData = new FormData();
       formData.append("file", selectedFile);
 
@@ -28,11 +28,11 @@ const UploadImage = () => {
         .then((response) => response.json())
         .then((data) => {
           setResponse(data.message || JSON.stringify(data));
-          setLoading(false); // Set loading to false when the upload is complete
+          setLoading(false);
         })
         .catch((error) => {
           console.error("Error uploading file:", error);
-          setLoading(false); // Set loading to false if there's an error
+          setLoading(false);
         });
     } else {
       alert("Please select a file first.");

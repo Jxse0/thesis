@@ -35,7 +35,6 @@ def transcription(file):
     except Exception as e:
          return f"An error occurred: {str(e)}"
     finally:
-        # Ensure the file is deleted after processing
         if file and os.path.exists(file):
             try:
                 os.remove(file)
@@ -44,26 +43,18 @@ def transcription(file):
 
 
 def subtitle(video_file):
-    # Load the video file
     video = VideoFileClip(video_file)
-
-    # Extract audio
     audio = video.audio
 
-    # Generate a unique ID for the audio file
     unique_id = str(uuid.uuid4())
 
-    # Define the output directory
     output_dir = "audio"
     os.makedirs(output_dir, exist_ok=True)
 
-    # Define the output audio file path
     output_audio = os.path.join(output_dir, f"{unique_id}.mp3")
 
-    # Write audio to file
     audio.write_audiofile(output_audio)
 
-    # Close the video file
     video.close()
 
     return transcription(output_audio)     

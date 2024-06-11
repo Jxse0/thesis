@@ -1,3 +1,5 @@
+# Experiment, ausführen über Terminal: python detect.py
+
 import cv2
 import mediapipe as mp
 
