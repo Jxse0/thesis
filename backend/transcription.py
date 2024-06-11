@@ -1,20 +1,9 @@
-from dotenv import load_dotenv
-import os
-from openai import OpenAI
-
-
-load_dotenv()
-secret_key = os.getenv('OPENAI_API_KEY')
-
-ai = OpenAI(
-    api_key=secret_key,
- )
-
+from openaiClient import client
 
 def transcription(file):
      try:
         with open(file, "rb") as audio_file:
-            response = ai.audio.transcriptions.create(
+            response = client.audio.transcriptions.create(
                 model="whisper-1",
                 file=audio_file
             )

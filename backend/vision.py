@@ -1,15 +1,6 @@
 import base64
-from dotenv import load_dotenv
-import os
-from openai import OpenAI
+from openaiClient import client
 
-
-load_dotenv()
-secret_key = os.getenv('OPENAI_API_KEY')
-
-ai = OpenAI(
-    api_key=secret_key,
- )
 
 
 def vision(file):
@@ -17,7 +8,7 @@ def vision(file):
           with open(file, "rb") as image_file:
                encoded_image = base64.b64encode(image_file.read()).decode("utf-8")
 
-          response = ai.chat.completions.create(
+          response = client.chat.completions.create(
                model="gpt-4o",
                messages=[
                     {
