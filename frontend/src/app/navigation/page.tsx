@@ -2,11 +2,30 @@
 
 import { useEffect, useRef, useState } from "react";
 import "./WebcamRecorder.css";
+import * as handPoseDetection from "@tensorflow-models/hand-pose-detection";
+import "@tensorflow/tfjs-core";
+import "@tensorflow/tfjs-backend-webgl";
+import "@mediapipe/hands";
 
 const WebcamRecorder = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [isWebcamOn, setIsWebcamOn] = useState(false);
+
+  const model = handPoseDetection.SupportedModels.MediaPipeHands;
+  const detectorConfig = {
+    runtime: "mediapipe",
+    solutionPath: "https://cdn.jsdelivr.net/npm/@mediapipe/hands",
+  };
+
+  let detector: handPoseDetection.HandDetector;
+
+  async function createDetector() {
+    detector = await handPoseDetection.createDetector(
+      model,
+      detectorConfig as any
+    );
+  }
 
   const startWebcam = async () => {
     try {
@@ -15,20 +34,26 @@ const WebcamRecorder = () => {
         videoRef.current.srcObject = stream;
       }
       setStream(stream);
+
       setIsWebcamOn(true);
     } catch (err) {
       console.error("Error accessing webcam:", err);
     }
   };
 
-  const stopWebcam = () => {
+  const stopWebcam = async () => {
     if (stream) {
+      const hands = await detector.estimateHands(videoRef.current as any, {
+        flipHorizontal: true,
+      });
+      console.log(hands);
       stream.getTracks().forEach((track) => track.stop());
       setIsWebcamOn(false);
     }
   };
 
   useEffect(() => {
+    createDetector();
     return () => {
       if (stream) {
         stream.getTracks().forEach((track) => track.stop());
