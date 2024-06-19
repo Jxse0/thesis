@@ -56,24 +56,29 @@ const WebcamRecorder = () => {
     if (stream) {
       stream.getTracks().forEach((track) => track.stop());
       setIsWebcamOn(false);
+      setDetector(null);
     }
   };
 
   const predict = async () => {
     if (videoRef.current && detector && canvasRef.current) {
       const hands = await detector.estimateHands(videoRef.current, {
-        flipHorizontal: false,
+        flipHorizontal: true,
       });
-
+      console.log(hands);
       const ctx = canvasRef.current.getContext("2d");
       if (ctx) {
         ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 
         hands.forEach((hand) => {
-          hand.keypoints.forEach((keypoint) => {
+          hand.keypoints.forEach((keypoint, index) => {
             ctx.beginPath();
             ctx.arc(keypoint.x, keypoint.y, 5, 0, 2 * Math.PI);
-            ctx.fillStyle = "red";
+            if (index === 8) {
+              ctx.fillStyle = "blue";
+            } else {
+              ctx.fillStyle = "red";
+            }
             ctx.fill();
           });
         });
