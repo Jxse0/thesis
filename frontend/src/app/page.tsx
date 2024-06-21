@@ -36,7 +36,7 @@ export default function Home() {
         <br />
         <Link href="/video">Upload Video</Link>
         <br />
-        <Link href="/navigation">Webcam Recorder</Link>
+        <Link href="/navigation">Hand Navigation</Link>
       </div>
     </div>
   );

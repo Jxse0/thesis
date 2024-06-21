@@ -18,6 +18,7 @@ const WebcamRecorder = () => {
   const model = handPoseDetection.SupportedModels.MediaPipeHands;
   const detectorConfig = {
     runtime: "mediapipe",
+    maxHands: 1,
     solutionPath: "https://cdn.jsdelivr.net/npm/@mediapipe/hands",
   };
 
@@ -71,9 +72,23 @@ const WebcamRecorder = () => {
         ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 
         hands.forEach((hand) => {
+          const minX = Math.min(...hand.keypoints.map((p) => p.x));
+          const maxX = Math.max(...hand.keypoints.map((p) => p.x));
+          const minY = Math.min(...hand.keypoints.map((p) => p.y));
+          const maxY = Math.max(...hand.keypoints.map((p) => p.y));
+          const centerX = (minX + maxX) / 2;
+          const centerY = (minY + maxY) / 2;
+
+          const scaleFactor = 0.2;
+
           hand.keypoints.forEach((keypoint, index) => {
             ctx.beginPath();
-            ctx.arc(keypoint.x, keypoint.y, 5, 0, 2 * Math.PI);
+            const radius = 1;
+
+            const scaledX = centerX + (keypoint.x - centerX) * scaleFactor;
+            const scaledY = centerY + (keypoint.y - centerY) * scaleFactor;
+
+            ctx.arc(scaledX, scaledY, radius, 0, 2 * Math.PI);
             if (index === 8) {
               ctx.fillStyle = "blue";
             } else {
@@ -95,22 +110,6 @@ const WebcamRecorder = () => {
 
   return (
     <div className="container">
-      <h1 className="title">Webcam Viewer</h1>
-      <div style={{ position: "relative" }}>
-        <video
-          ref={videoRef}
-          autoPlay
-          className="video"
-          width="640"
-          height="480"
-        ></video>
-        <canvas
-          ref={canvasRef}
-          className="canvas"
-          width="640"
-          height="480"
-        ></canvas>
-      </div>
       <div className="buttonContainer">
         {!isWebcamOn ? (
           <button onClick={startWebcam} className="button">
@@ -122,6 +121,18 @@ const WebcamRecorder = () => {
           </button>
         )}
       </div>
+      <video
+        ref={videoRef}
+        autoPlay
+        className="video"
+        width="640"
+        height="480"
+      ></video>
+      <canvas ref={canvasRef} className="canvas"></canvas>
+      <button onClick={() => alert("Hello World")} className="button">
+        Clickme
+      </button>
+      ;
     </div>
   );
 };

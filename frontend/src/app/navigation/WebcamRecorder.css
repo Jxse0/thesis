@@ -8,36 +8,26 @@
   position: relative;
 }
 
-.title {
-  font-size: 2em;
-  margin-bottom: 20px;
-  color: #333;
-}
-
 .video {
-  width: 100%;
-  max-width: 600px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  margin-bottom: 20px;
-  position: relative;
-  z-index: 1;
+  display: none; /* Hide the video */
 }
 
 .canvas {
   width: 100%;
-  max-width: 600px;
+  height: 100vh; /* Cover the entire page */
   position: absolute;
-  top: 20px; /* adjust if necessary */
-  border-radius: 10px;
-  z-index: 2;
-  pointer-events: none; /* Ensure canvas doesn't block video interactions */
+  top: 0;
+  left: 0;
+  border-radius: 0; /* Remove border radius */
+  z-index: 2; /* Ensure the canvas is above the button */
+  pointer-events: none; /* Ensure canvas doesn't block interactions */
 }
 
 .buttonContainer {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 1;
 }
 
 .button {
