@@ -100,6 +100,8 @@ const WebcamRecorder = () => {
               const scaledY = keypoint.y * scaleY;
               cursorRef.current.style.left = `${scaledX}px`;
               cursorRef.current.style.top = `${scaledY}px`;
+              const hoverElement = document.elementFromPoint(scaledX, scaledY);
+              console.log(hoverElement);
             }
           });
         });
