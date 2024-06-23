@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useRef, useState } from "react";
 import "./WebcamRecorder.css";
 import * as handPoseDetection from "@tensorflow-models/hand-pose-detection";
@@ -14,24 +13,28 @@ const WebcamRecorder = () => {
   const [isWebcamOn, setIsWebcamOn] = useState(false);
   const [detector, setDetector] =
     useState<handPoseDetection.HandDetector | null>(null);
+  const cursorRef = useRef<HTMLImageElement>(null);
 
   const model = handPoseDetection.SupportedModels.MediaPipeHands;
-  const detectorConfig = {
+  const detectorConfig: any = {
     runtime: "mediapipe",
     maxHands: 1,
     solutionPath: "https://cdn.jsdelivr.net/npm/@mediapipe/hands",
   };
 
   useEffect(() => {
-    const createDetector = async () => {
-      const newDetector = await handPoseDetection.createDetector(
-        model,
-        detectorConfig as any
-      );
-      setDetector(newDetector);
+    const loadDetector = async () => {
+      try {
+        const newDetector = await handPoseDetection.createDetector(
+          model,
+          detectorConfig
+        );
+        setDetector(newDetector);
+      } catch (err) {
+        console.error("Error loading hand detector:", err);
+      }
     };
-
-    createDetector();
+    loadDetector();
 
     return () => {
       if (stream) {
@@ -42,20 +45,23 @@ const WebcamRecorder = () => {
 
   const startWebcam = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      const newStream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+      });
       if (videoRef.current) {
-        videoRef.current.srcObject = stream;
+        videoRef.current.srcObject = newStream;
       }
-      setStream(stream);
+      setStream(newStream);
       setIsWebcamOn(true);
     } catch (err) {
       console.error("Error accessing webcam:", err);
     }
   };
 
-  const stopWebcam = async () => {
+  const stopWebcam = () => {
     if (stream) {
       stream.getTracks().forEach((track) => track.stop());
+      setStream(null);
       setIsWebcamOn(false);
       setDetector(null);
     }
@@ -66,35 +72,35 @@ const WebcamRecorder = () => {
       const hands = await detector.estimateHands(videoRef.current, {
         flipHorizontal: true,
       });
-      console.log(hands);
+
       const ctx = canvasRef.current.getContext("2d");
       if (ctx) {
         ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 
+        const containerNav: HTMLElement | null =
+          document.querySelector(".container-nav");
+        const containerNavWidth = containerNav?.offsetWidth || 0;
+        const containerNavHeight = containerNav?.offsetHeight || 0;
+        const videoWidth = videoRef.current.videoWidth;
+        const videoHeight = videoRef.current.videoHeight;
+
+        const scaleX = containerNavWidth / videoWidth;
+        const scaleY = containerNavHeight / videoHeight;
+
         hands.forEach((hand) => {
-          const minX = Math.min(...hand.keypoints.map((p) => p.x));
-          const maxX = Math.max(...hand.keypoints.map((p) => p.x));
-          const minY = Math.min(...hand.keypoints.map((p) => p.y));
-          const maxY = Math.max(...hand.keypoints.map((p) => p.y));
-          const centerX = (minX + maxX) / 2;
-          const centerY = (minY + maxY) / 2;
-
-          const scaleFactor = 0.2;
-
           hand.keypoints.forEach((keypoint, index) => {
             ctx.beginPath();
-            const radius = 1;
 
-            const scaledX = centerX + (keypoint.x - centerX) * scaleFactor;
-            const scaledY = centerY + (keypoint.y - centerY) * scaleFactor;
-
-            ctx.arc(scaledX, scaledY, radius, 0, 2 * Math.PI);
-            if (index === 8) {
-              ctx.fillStyle = "blue";
-            } else {
-              ctx.fillStyle = "red";
-            }
+            ctx.arc(keypoint.x, keypoint.y, 5, 0, 2 * Math.PI);
+            ctx.fillStyle = index === 8 ? "blue" : "red";
             ctx.fill();
+
+            if (index === 8 && cursorRef.current) {
+              const scaledX = keypoint.x * scaleX;
+              const scaledY = keypoint.y * scaleY;
+              cursorRef.current.style.left = `${scaledX}px`;
+              cursorRef.current.style.top = `${scaledY}px`;
+            }
           });
         });
       }
@@ -106,10 +112,34 @@ const WebcamRecorder = () => {
       const interval = setInterval(predict, 100);
       return () => clearInterval(interval);
     }
-  }, [videoRef, detector]);
+  }, [detector]);
 
   return (
-    <div className="container">
+    <div className="container-nav">
+      <img
+        ref={cursorRef}
+        id="cursor"
+        src="https://media.geeksforgeeks.org/wp-content/uploads/20200319212118/cursor2.png"
+        width="15"
+        height="20"
+        alt="Cursor"
+      />
+      <h1 className="title">Webcam Viewer</h1>
+      <div className="video-container">
+        <video
+          ref={videoRef}
+          autoPlay
+          className="video"
+          width="640"
+          height="480"
+        ></video>
+        <canvas
+          ref={canvasRef}
+          className="canvas"
+          width="640"
+          height="480"
+        ></canvas>
+      </div>
       <div className="buttonContainer">
         {!isWebcamOn ? (
           <button onClick={startWebcam} className="button">
@@ -121,18 +151,6 @@ const WebcamRecorder = () => {
           </button>
         )}
       </div>
-      <video
-        ref={videoRef}
-        autoPlay
-        className="video"
-        width="640"
-        height="480"
-      ></video>
-      <canvas ref={canvasRef} className="canvas"></canvas>
-      <button onClick={() => alert("Hello World")} className="button">
-        Clickme
-      </button>
-      ;
     </div>
   );
 };

@@ -1,33 +1,61 @@
-.container {
+.container-nav {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 20px;
-  min-height: 100vh;
+  height: 100vh;
   position: relative;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+.title {
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 1;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+.video-container {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
 }
 
 .video {
-  display: none; /* Hide the video */
+  border-radius: 10px;
+  background-color: var(--background-color);
 }
 
 .canvas {
-  width: 100%;
-  height: 100vh; /* Cover the entire page */
+  border-radius: 10px;
+  z-index: 2;
+  margin-left: 20px;
+  background-color: var(--background-color);
+}
+
+.test-button {
   position: absolute;
-  top: 0;
-  left: 0;
-  border-radius: 0; /* Remove border radius */
-  z-index: 2; /* Ensure the canvas is above the button */
-  pointer-events: none; /* Ensure canvas doesn't block interactions */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  padding: 10px;
+  background-color: #ff0000;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 .buttonContainer {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  z-index: 1;
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
 }
 
 .button {
@@ -40,8 +68,15 @@
   cursor: pointer;
   margin: 0 10px;
   transition: background-color 0.3s ease;
+  z-index: 1;
 }
 
 .button:hover {
   background-color: #005bb5;
+}
+
+img {
+  pointer-events: none;
+  position: absolute;
+  z-index: 4;
 }

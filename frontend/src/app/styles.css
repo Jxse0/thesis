@@ -4,6 +4,9 @@ body {
   --link-color: #0070f3;
   background-color: var(--background-color);
   color: var(--text-color);
+  margin: 0; /* Added to remove default margin */
+  padding: 0; /* Added to remove default padding */
+  overflow: hidden; /* Added to prevent scrolling */
 }
 
 body.dark-mode {
