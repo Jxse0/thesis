@@ -100,7 +100,13 @@ const WebcamRecorder = () => {
               const scaledY = keypoint.y * scaleY;
               cursorRef.current.style.left = `${scaledX}px`;
               cursorRef.current.style.top = `${scaledY}px`;
-              const hoverElement = document.elementFromPoint(scaledX, scaledY);
+              const hoverElement = document.elementFromPoint(
+                scaledX,
+                scaledY
+              ) as HTMLButtonElement | null;
+              if (hoverElement && hoverElement.tagName === "BUTTON") {
+                hoverElement.click();
+              }
               console.log(hoverElement);
             }
           });
@@ -143,6 +149,9 @@ const WebcamRecorder = () => {
         ></canvas>
       </div>
       <div className="buttonContainer">
+        <button onClick={() => alert("Button clicked!")}>
+          Click me for alert
+        </button>
         {!isWebcamOn ? (
           <button onClick={startWebcam} className="button">
             Start Webcam
