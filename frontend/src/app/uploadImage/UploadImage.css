@@ -6,6 +6,15 @@
   border: 1px solid #ddd;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  color: var(--text-color);
+}
+
+.container-image img {
+  max-width: 100%;
+  height: auto;
+  margin: 20px 0;
+  border: 1px solid #ddd;
+  border-radius: 8px;
 }
 
 input[type="file"] {
@@ -35,14 +44,6 @@ button:disabled {
 
 button:hover:not(:disabled) {
   background-color: #0056b3;
-}
-
-img {
-  max-width: 100%;
-  height: auto;
-  margin: 20px 0;
-  border: 1px solid #ddd;
-  border-radius: 8px;
 }
 
 p {
