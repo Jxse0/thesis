@@ -14,11 +14,12 @@ const WebcamRecorder = () => {
   const [detector, setDetector] =
     useState<handPoseDetection.HandDetector | null>(null);
   const cursorRef = useRef<HTMLImageElement>(null);
+  let hoverElement: HTMLButtonElement | null = null;
 
   const model = handPoseDetection.SupportedModels.MediaPipeHands;
   const detectorConfig: any = {
     runtime: "mediapipe",
-    maxHands: 1,
+    maxHands: 2,
     solutionPath: "https://cdn.jsdelivr.net/npm/@mediapipe/hands",
   };
 
@@ -100,16 +101,24 @@ const WebcamRecorder = () => {
               const scaledY = keypoint.y * scaleY;
               cursorRef.current.style.left = `${scaledX}px`;
               cursorRef.current.style.top = `${scaledY}px`;
-              const hoverElement = document.elementFromPoint(
+              const element = document.elementFromPoint(
                 scaledX,
                 scaledY
               ) as HTMLButtonElement | null;
-              if (hoverElement && hoverElement.tagName === "BUTTON") {
-                hoverElement.click();
-              }
-              console.log(hoverElement);
+              hoverElement = element;
             }
           });
+          const isHandClosed =
+            hand.keypoints[5].y < hand.keypoints[12].y &&
+            hand.keypoints[5].y < hand.keypoints[16].y &&
+            hand.keypoints[5].y < hand.keypoints[20].y;
+          if (isHandClosed) {
+            console.log(hoverElement);
+
+            if (hoverElement && hoverElement.tagName === "BUTTON") {
+              hoverElement.click();
+            }
+          }
         });
       }
     }
