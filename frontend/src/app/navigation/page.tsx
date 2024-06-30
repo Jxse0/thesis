@@ -9,15 +9,15 @@ import "@mediapipe/hands";
 const WebcamRecorder = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const cursorRef = useRef<HTMLImageElement>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [isWebcamOn, setIsWebcamOn] = useState(false);
   const [detector, setDetector] =
     useState<handPoseDetection.HandDetector | null>(null);
-  const cursorRef = useRef<HTMLImageElement>(null);
-  let hoverElement: HTMLButtonElement | null = null;
 
+  let hoverElement: HTMLButtonElement | null = null;
   const model = handPoseDetection.SupportedModels.MediaPipeHands;
-  const detectorConfig: any = {
+  const detectorConfig = {
     runtime: "mediapipe",
     maxHands: 2,
     solutionPath: "https://cdn.jsdelivr.net/npm/@mediapipe/hands",
@@ -28,7 +28,7 @@ const WebcamRecorder = () => {
       try {
         const newDetector = await handPoseDetection.createDetector(
           model,
-          detectorConfig
+          detectorConfig as any
         );
         setDetector(newDetector);
       } catch (err) {
@@ -38,9 +38,7 @@ const WebcamRecorder = () => {
     loadDetector();
 
     return () => {
-      if (stream) {
-        stream.getTracks().forEach((track) => track.stop());
-      }
+      stream?.getTracks().forEach((track) => track.stop());
     };
   }, [stream]);
 
@@ -49,9 +47,7 @@ const WebcamRecorder = () => {
       const newStream = await navigator.mediaDevices.getUserMedia({
         video: true,
       });
-      if (videoRef.current) {
-        videoRef.current.srcObject = newStream;
-      }
+      if (videoRef.current) videoRef.current.srcObject = newStream;
       setStream(newStream);
       setIsWebcamOn(true);
     } catch (err) {
@@ -60,12 +56,10 @@ const WebcamRecorder = () => {
   };
 
   const stopWebcam = () => {
-    if (stream) {
-      stream.getTracks().forEach((track) => track.stop());
-      setStream(null);
-      setIsWebcamOn(false);
-      setDetector(null);
-    }
+    stream?.getTracks().forEach((track) => track.stop());
+    setStream(null);
+    setIsWebcamOn(false);
+    setDetector(null);
   };
 
   const predict = async () => {
@@ -73,25 +67,23 @@ const WebcamRecorder = () => {
       const hands = await detector.estimateHands(videoRef.current, {
         flipHorizontal: true,
       });
-
       const ctx = canvasRef.current.getContext("2d");
+
       if (ctx) {
         ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-
-        const containerNav: HTMLElement | null =
-          document.querySelector(".container-nav");
+        const containerNav = document.querySelector(
+          ".container-nav"
+        ) as HTMLElement;
         const containerNavWidth = containerNav?.offsetWidth || 0;
         const containerNavHeight = containerNav?.offsetHeight || 0;
         const videoWidth = videoRef.current.videoWidth;
         const videoHeight = videoRef.current.videoHeight;
-
         const scaleX = containerNavWidth / videoWidth;
         const scaleY = containerNavHeight / videoHeight;
 
         hands.forEach((hand) => {
           hand.keypoints.forEach((keypoint, index) => {
             ctx.beginPath();
-
             ctx.arc(keypoint.x, keypoint.y, 5, 0, 2 * Math.PI);
             ctx.fillStyle = index === 8 ? "blue" : "red";
             ctx.fill();
@@ -101,23 +93,20 @@ const WebcamRecorder = () => {
               const scaledY = keypoint.y * scaleY;
               cursorRef.current.style.left = `${scaledX}px`;
               cursorRef.current.style.top = `${scaledY}px`;
-              const element = document.elementFromPoint(
+              hoverElement = document.elementFromPoint(
                 scaledX,
                 scaledY
               ) as HTMLButtonElement | null;
-              hoverElement = element;
             }
           });
+
           const isHandClosed =
             hand.keypoints[5].y < hand.keypoints[12].y &&
             hand.keypoints[5].y < hand.keypoints[16].y &&
             hand.keypoints[5].y < hand.keypoints[20].y;
-          if (isHandClosed) {
-            console.log(hoverElement);
 
-            if (hoverElement && hoverElement.tagName === "BUTTON") {
-              hoverElement.click();
-            }
+          if (isHandClosed && hoverElement?.tagName === "BUTTON") {
+            hoverElement.click();
           }
         });
       }
@@ -156,11 +145,11 @@ const WebcamRecorder = () => {
           width="640"
           height="480"
         ></canvas>
-      </div>
-      <div className="buttonContainer">
         <button onClick={() => alert("Button clicked!")}>
           Click me for alert
         </button>
+      </div>
+      <div className="buttonContainer">
         {!isWebcamOn ? (
           <button onClick={startWebcam} className="button">
             Start Webcam
