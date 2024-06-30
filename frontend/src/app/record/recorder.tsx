@@ -1,8 +1,7 @@
 "use client";
 import React, { useState, useRef } from "react";
-import Recorder from "./recorder";
 
-const RecordPage: React.FC = () => {
+const Recorder: React.FC = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [audioURL, setAudioURL] = useState<string | null>(null);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
@@ -65,12 +64,33 @@ const RecordPage: React.FC = () => {
   };
 
   return (
-    <div>
-      {" "}
-      <h1>Record Audio</h1>
-      <Recorder />
+    <div style={{ padding: "20px" }}>
+      {isRecording ? (
+        <button onClick={handleStopRecording}>Stop Recording</button>
+      ) : (
+        <button onClick={handleStartRecording} disabled={loading}>
+          {loading ? "Recording..." : "Start Recording"}
+        </button>
+      )}
+      {audioURL && (
+        <div>
+          <audio src={audioURL} controls />
+          <button onClick={handleSubmit} disabled={loading}>
+            {loading ? "Submitting..." : "Submit"}
+          </button>
+          <button onClick={handleDelete} disabled={loading}>
+            Delete
+          </button>
+        </div>
+      )}
+      {response && (
+        <div>
+          <p>{response}</p>
+          <button onClick={handleDelete}>Clear</button>
+        </div>
+      )}
     </div>
   );
 };
 
-export default RecordPage;
+export default Recorder;
