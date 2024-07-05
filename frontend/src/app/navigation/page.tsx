@@ -21,7 +21,7 @@ const WebcamRecorder = () => {
   const model = handPoseDetection.SupportedModels.MediaPipeHands;
   const detectorConfig: any = {
     runtime: "mediapipe",
-    maxHands: 2,
+    maxHands: 1,
     solutionPath: "https://cdn.jsdelivr.net/npm/@mediapipe/hands",
   };
 
@@ -153,13 +153,13 @@ const WebcamRecorder = () => {
           width="640"
           height="480"
         ></video>
+        <Recorder />
         <canvas
           ref={canvasRef}
           className="canvas"
           width="640"
           height="480"
         ></canvas>
-        <Recorder />
       </div>
       <div className="buttonContainer">
         {!isWebcamOn ? (
