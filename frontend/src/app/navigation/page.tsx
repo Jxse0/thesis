@@ -4,7 +4,6 @@ import "./WebcamRecorder.css";
 import * as handPoseDetection from "@tensorflow-models/hand-pose-detection";
 import "@tensorflow/tfjs-core";
 import "@tensorflow/tfjs-backend-webgl";
-import "@mediapipe/hands";
 import Recorder from "../record/recorder";
 
 const WebcamRecorder = () => {
@@ -17,6 +16,9 @@ const WebcamRecorder = () => {
   const cursorRef = useRef<HTMLImageElement>(null);
   let hoverElement: HTMLButtonElement | null = null;
   let mutex = false;
+  let scaleX = 0;
+  let scaleY = 0;
+  let ctx: CanvasRenderingContext2D | null = null;
 
   const model = handPoseDetection.SupportedModels.MediaPipeHands;
   const detectorConfig: any = {
@@ -70,13 +72,9 @@ const WebcamRecorder = () => {
     }
   };
 
-  const predict = async () => {
-    if (videoRef.current && detector && canvasRef.current) {
-      const hands = await detector.estimateHands(videoRef.current, {
-        flipHorizontal: true,
-      });
-
-      const ctx = canvasRef.current.getContext("2d");
+  const initCtx = () => {
+    if (canvasRef.current && videoRef.current) {
+      ctx = canvasRef.current.getContext("2d");
       if (ctx) {
         ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 
@@ -87,49 +85,71 @@ const WebcamRecorder = () => {
         const videoWidth = videoRef.current.videoWidth;
         const videoHeight = videoRef.current.videoHeight;
 
-        const scaleX = containerNavWidth / videoWidth;
-        const scaleY = containerNavHeight / videoHeight;
-
-        hands.forEach((hand) => {
-          hand.keypoints.forEach((keypoint, index) => {
-            ctx.beginPath();
-
-            ctx.arc(keypoint.x, keypoint.y, 5, 0, 2 * Math.PI);
-            ctx.fillStyle = index === 8 ? "blue" : "red";
-            ctx.fill();
-
-            if (index === 8 && cursorRef.current) {
-              const scaledX = keypoint.x * scaleX;
-              const scaledY = keypoint.y * scaleY;
-              cursorRef.current.style.left = `${scaledX}px`;
-              cursorRef.current.style.top = `${scaledY}px`;
-              const element = document.elementFromPoint(
-                scaledX,
-                scaledY
-              ) as HTMLButtonElement | null;
-              hoverElement = element;
-            }
-          });
-          const isHandClosed =
-            hand.keypoints[5].y < hand.keypoints[12].y &&
-            hand.keypoints[5].y < hand.keypoints[16].y &&
-            hand.keypoints[5].y < hand.keypoints[20].y;
-          if (isHandClosed) {
-            if (hoverElement && hoverElement.tagName === "BUTTON" && !mutex) {
-              hoverElement.click();
-              mutex = true;
-            }
-          } else {
-            mutex = false;
-          }
-        });
+        scaleX = containerNavWidth / videoWidth;
+        scaleY = containerNavHeight / videoHeight;
       }
+    }
+  };
+
+  const drawHands = (hands: handPoseDetection.Hand[]) => {
+    if (ctx && canvasRef.current) {
+      ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    }
+    hands.forEach((hand) => {
+      hand.keypoints.forEach((keypoint, index) => {
+        if (ctx) {
+          ctx.beginPath();
+          ctx.arc(keypoint.x, keypoint.y, 5, 0, 2 * Math.PI);
+          ctx.fillStyle = index === 8 ? "blue" : "red";
+          ctx.fill();
+        }
+      });
+    });
+  };
+
+  const handleHandClick = (hands: handPoseDetection.Hand[]) => {
+    hands.forEach((hand) => {
+      hand.keypoints.forEach((keypoint, index) => {
+        if (index === 8 && cursorRef.current) {
+          const scaledX = keypoint.x * scaleX;
+          const scaledY = keypoint.y * scaleY;
+          cursorRef.current.style.left = `${scaledX}px`;
+          cursorRef.current.style.top = `${scaledY}px`;
+          const element = document.elementFromPoint(
+            scaledX,
+            scaledY
+          ) as HTMLButtonElement | null;
+          hoverElement = element;
+        }
+      });
+      const isHandClosed =
+        hand.keypoints[5].y < hand.keypoints[12].y &&
+        hand.keypoints[5].y < hand.keypoints[16].y &&
+        hand.keypoints[5].y < hand.keypoints[20].y;
+      if (isHandClosed) {
+        if (hoverElement && hoverElement.tagName === "BUTTON" && !mutex) {
+          hoverElement.click();
+          mutex = true;
+        }
+      } else {
+        mutex = false;
+      }
+    });
+  };
+  const trackHands = async () => {
+    if (videoRef.current && detector && canvasRef.current) {
+      const hands = await detector.estimateHands(videoRef.current, {
+        flipHorizontal: true,
+      });
+      drawHands(hands);
+      handleHandClick(hands);
     }
   };
 
   useEffect(() => {
     if (videoRef.current) {
-      const interval = setInterval(predict, 100);
+      initCtx();
+      const interval = setInterval(trackHands, 100);
       return () => clearInterval(interval);
     }
   }, [detector]);
