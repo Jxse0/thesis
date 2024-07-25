@@ -27,7 +27,7 @@ const UploadImage = () => {
       })
         .then((response) => response.json())
         .then((data) => {
-          setResponse(data.message || JSON.stringify(data));
+          setResponse(JSON.stringify(data));
           setLoading(false);
         })
         .catch((error) => {
@@ -49,7 +49,6 @@ const UploadImage = () => {
         </button>
         {selectedFile && <p>Selected file: {selectedFile.name}</p>}
         {imageUrl && <img src={imageUrl} alt={response} />}
-        {response && <p>Response: {response}</p>}
       </div>
     </>
   );

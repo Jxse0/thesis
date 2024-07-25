@@ -31,8 +31,14 @@ def read_root():
 
 @app.post("/img")
 async def upload_image(file: UploadFile = File(...)):
+    unique_filename = None
+    file_path = None
     try:
-        file_path = os.path.join("img", file.filename)
+        unique_id = str(uuid.uuid4())
+        file_extension = os.path.splitext(file.filename)[1]
+        unique_filename = unique_id + file_extension
+        file_path = os.path.join("audio", unique_filename)
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
